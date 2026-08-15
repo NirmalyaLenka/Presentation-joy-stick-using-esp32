@@ -52,7 +52,9 @@ for reliability instead.
  
 If UP and DOWN feel swapped on your specific joystick, swap the two
 `yEvent` lines in `handleJoystick()` rather than rewiring anything.
- 
+ ## Images 
+ <img width="1420" height="1420" alt="IMG_20260815_224029" src="https://github.com/user-attachments/assets/f3e16d0e-ec48-4c38-9554-0b52e99a9a26" />
+
 ## Power behavior
  
 Power is managed by pairing state, not by idle time:
