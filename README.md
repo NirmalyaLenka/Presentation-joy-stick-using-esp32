@@ -53,7 +53,8 @@ for reliability instead.
 If UP and DOWN feel swapped on your specific joystick, swap the two
 `yEvent` lines in `handleJoystick()` rather than rewiring anything.
  ## Images 
- <img width="1420" height="1420" alt="IMG_20260815_224029" src="https://github.com/user-attachments/assets/f3e16d0e-ec48-4c38-9554-0b52e99a9a26" />
+ <img width="1420" height="1420" alt="IMG_20260815_224029" src="https://github.com/user-attachments/assets/f3e16d0e-ec48-4c38-9554-0b52e99a9a26" /> 
+<img width="1479" height="1479" alt="IMG_20260815_224010" src="https://github.com/user-attachments/assets/23a7b652-4e4a-491a-bb8a-4f1ce24c1784" />
 
 ## Power behavior
  
