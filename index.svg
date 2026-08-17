@@ -1,0 +1,136 @@
+<svg viewBox="0 0 1000 760" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1000" height="760" fill="#0f172a"/>
+
+  <!-- Title -->
+  <text x="500" y="45" text-anchor="middle" fill="#f8fafc" font-size="26" font-weight="700">ESP32 PowerPoint Remote — Wiring Diagram</text>
+  <text x="500" y="72" text-anchor="middle" fill="#94a3b8" font-size="14">HW-504 joystick → ESP32-WROOM-32 DevKit V1</text>
+
+  <!-- ===================== ESP32 BOARD ===================== -->
+  <g>
+    <rect x="120" y="130" width="220" height="420" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="150" y="150" width="160" height="60" rx="6" fill="#334155"/>
+    <text x="230" y="185" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="600">ESP32-WROOM-32</text>
+    <circle cx="230" cy="230" r="18" fill="#475569"/>
+    <text x="230" y="235" text-anchor="middle" fill="#cbd5e1" font-size="10">USB</text>
+    <text x="230" y="270" text-anchor="middle" fill="#64748b" font-size="12">DevKit V1</text>
+
+    <!-- Pin labels used, right side -->
+    <!-- 3V3 -->
+    <line x1="340" y1="330" x2="380" y2="330" stroke="#f8fafc" stroke-width="2"/>
+    <circle cx="340" cy="330" r="4" fill="#f8fafc"/>
+    <text x="335" y="325" text-anchor="end" fill="#e2e8f0" font-size="13" font-weight="600">3V3</text>
+
+    <!-- GND -->
+    <line x1="340" y1="380" x2="380" y2="380" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="340" cy="380" r="4" fill="#94a3b8"/>
+    <text x="335" y="375" text-anchor="end" fill="#e2e8f0" font-size="13" font-weight="600">GND</text>
+
+    <!-- GPIO34 -->
+    <line x1="340" y1="430" x2="380" y2="430" stroke="#38bdf8" stroke-width="2"/>
+    <circle cx="340" cy="430" r="4" fill="#38bdf8"/>
+    <text x="335" y="425" text-anchor="end" fill="#e2e8f0" font-size="13" font-weight="600">GPIO34</text>
+
+    <!-- GPIO35 -->
+    <line x1="340" y1="470" x2="380" y2="470" stroke="#4ade80" stroke-width="2"/>
+    <circle cx="340" cy="470" r="4" fill="#4ade80"/>
+    <text x="335" y="465" text-anchor="end" fill="#e2e8f0" font-size="13" font-weight="600">GPIO35</text>
+
+    <!-- GPIO32 -->
+    <line x1="340" y1="510" x2="380" y2="510" stroke="#fb923c" stroke-width="2"/>
+    <circle cx="340" cy="510" r="4" fill="#fb923c"/>
+    <text x="335" y="505" text-anchor="end" fill="#e2e8f0" font-size="13" font-weight="600">GPIO32</text>
+
+    <!-- unused pin marks (decorative) -->
+    <g fill="#475569">
+      <circle cx="340" cy="150" r="3"/>
+      <circle cx="340" cy="175" r="3"/>
+      <circle cx="340" cy="200" r="3"/>
+      <circle cx="340" cy="225" r="3"/>
+      <circle cx="340" cy="250" r="3"/>
+      <circle cx="340" cy="275" r="3"/>
+      <circle cx="340" cy="300" r="3"/>
+      <circle cx="340" cy="540" r="3"/>
+    </g>
+  </g>
+
+  <!-- ===================== JOYSTICK MODULE ===================== -->
+  <g>
+    <rect x="620" y="220" width="220" height="220" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <circle cx="730" cy="300" r="42" fill="#334155" stroke="#475569" stroke-width="2"/>
+    <circle cx="730" cy="300" r="16" fill="#64748b"/>
+    <text x="730" y="360" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="600">HW-504 Joystick</text>
+    <text x="730" y="380" text-anchor="middle" fill="#64748b" font-size="11">2-axis + push button</text>
+
+    <!-- Pin stubs, left side -->
+    <line x1="580" y1="330" x2="620" y2="330" stroke="#f8fafc" stroke-width="2"/>
+    <circle cx="580" cy="330" r="4" fill="#f8fafc"/>
+    <text x="590" y="325" fill="#e2e8f0" font-size="13" font-weight="600">VCC</text>
+
+    <line x1="580" y1="380" x2="620" y2="380" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="580" cy="380" r="4" fill="#94a3b8"/>
+    <text x="590" y="375" fill="#e2e8f0" font-size="13" font-weight="600">GND</text>
+
+    <line x1="580" y1="430" x2="620" y2="430" stroke="#38bdf8" stroke-width="2"/>
+    <circle cx="580" cy="430" r="4" fill="#38bdf8"/>
+    <text x="590" y="425" fill="#e2e8f0" font-size="13" font-weight="600">VRx</text>
+
+    <line x1="580" y1="470" x2="620" y2="470" stroke="#4ade80" stroke-width="2"/>
+    <circle cx="580" cy="470" r="4" fill="#4ade80"/>
+    <text x="590" y="465" fill="#e2e8f0" font-size="13" font-weight="600">VRy</text>
+
+    <line x1="580" y1="510" x2="620" y2="510" stroke="#fb923c" stroke-width="2"/>
+    <circle cx="580" cy="510" r="4" fill="#fb923c"/>
+    <text x="590" y="505" fill="#e2e8f0" font-size="13" font-weight="600">SW</text>
+  </g>
+
+  <!-- ===================== CONNECTING WIRES ===================== -->
+  <!-- 3V3 -> VCC -->
+  <path d="M 380 330 L 580 330" stroke="#f8fafc" stroke-width="2.5" fill="none"/>
+  <!-- GND -> GND -->
+  <path d="M 380 380 L 580 380" stroke="#94a3b8" stroke-width="2.5" fill="none"/>
+  <!-- GPIO34 -> VRx -->
+  <path d="M 380 430 L 580 430" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+  <!-- GPIO35 -> VRy -->
+  <path d="M 380 470 L 580 470" stroke="#4ade80" stroke-width="2.5" fill="none"/>
+  <!-- GPIO32 -> SW -->
+  <path d="M 380 510 L 580 510" stroke="#fb923c" stroke-width="2.5" fill="none"/>
+
+  <!-- Warning callout -->
+  <g>
+    <rect x="380" y="600" width="420" height="70" rx="10" fill="#3f1d1d" stroke="#7f1d1d" stroke-width="1.5"/>
+    <text x="400" y="625" fill="#fca5a5" font-size="13" font-weight="700">⚠ Power the joystick from 3V3, not 5V</text>
+    <text x="400" y="646" fill="#fecaca" font-size="12">At 5V, VRx/VRy can exceed the ESP32 ADC pins' safe input range.</text>
+  </g>
+
+  <!-- ===================== SYSTEM FLOW (bottom) ===================== -->
+  <g>
+    <text x="500" y="700" text-anchor="middle" fill="#94a3b8" font-size="13" font-weight="600">SYSTEM FLOW</text>
+
+    <!-- Boxes -->
+    <rect x="40" y="715" width="150" height="40" rx="8" fill="#1e293b" stroke="#475569"/>
+    <text x="115" y="740" text-anchor="middle" fill="#e2e8f0" font-size="12">Joystick input</text>
+
+    <rect x="250" y="715" width="150" height="40" rx="8" fill="#1e293b" stroke="#475569"/>
+    <text x="325" y="740" text-anchor="middle" fill="#e2e8f0" font-size="12">ESP32 (BLE HID)</text>
+
+    <rect x="460" y="715" width="150" height="40" rx="8" fill="#1e293b" stroke="#475569"/>
+    <text x="535" y="740" text-anchor="middle" fill="#e2e8f0" font-size="12">Windows Bluetooth</text>
+
+    <rect x="670" y="715" width="150" height="40" rx="8" fill="#1e293b" stroke="#475569"/>
+    <text x="745" y="740" text-anchor="middle" fill="#e2e8f0" font-size="12">PowerPoint</text>
+
+    <!-- Arrows -->
+    <path d="M 190 735 L 245 735" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 400 735 L 455 735" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 610 735 L 665 735" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+</svg>
