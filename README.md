@@ -144,6 +144,32 @@ MIT.
 
 ---
 
+## Skills & technologies
+
+`Arduino/C++`
+
+
+## Repository structure
+
+Key files and folders (not exhaustive):
+
+- `ESP32_PowerPoint_Remote.ino`
+- `LICENSE (8)`
+- `README.md`
+- `index.svg`
+- `optimized_presentation_remote.ino`
+- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (1).ino`
+- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (2).ino`
+- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (3).ino`
+- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (4).ino`
+- `pre production codes just for your info dont impliment/joystick_raw_test.ino`
+
+
+## How it works
+
+The main firmware sketch is `ESP32_PowerPoint_Remote.ino`. Open it in Arduino IDE, verify the board, pin mapping and library requirements, then compile and upload. Test hardware behaviour on the real circuit before relying on it.
+
+
 ## Maintenance & Audit
 
 - **Audit date:** 10 November 2026
