@@ -1,174 +1,127 @@
 # ESP32 PowerPoint Remote
- 
-A wireless PowerPoint presentation remote built from an ESP32-WROOM-32 and a
-2-axis analog joystick (HW-504 or equivalent). It pairs with Windows as a
-normal Bluetooth keyboard - no companion app, dongle, or PowerPoint add-in
-needed.
- 
-Firmware file: `optimized_presentation_remote.ino`
- # please use the 'optimized_presentation_remote.ino' file 
-## Hardware
- 
-| Component | Notes |
-|---|---|
-| ESP32-WROOM-32 DevKit V1 | 30 or 38-pin dev board |
-| HW-504 (or equivalent) 2-axis analog joystick | VRx, VRy, SW, VCC, GND pins |
-| Power source | USB power bank, or a properly regulated LiPo setup |
- 
-## Wiring
- 
-| Joystick pin | ESP32 GPIO |
+
+A Bluetooth Low Energy (BLE) HID keyboard built around an ESP32-WROOM-32 and a two-axis analog joystick. The recommended firmware lets a Windows host treat the board as a keyboard, so it can send presentation-navigation keystrokes without a companion PC application.
+
+**Recommended sketch:** [`optimized_presentation_remote.ino`](optimized_presentation_remote.ino). The repository also contains an earlier root-level sketch and pre-production examples; see [Repository contents](#repository-contents).
+
+## Features
+
+- BLE keyboard device named `PPT Remote`.
+- Analog joystick navigation with averaged ADC readings, a dead zone, hysteresis/re-arm behavior, and a slide-change cooldown.
+- Joystick push-button sends `F5` to start a slide show.
+- The optimized sketch advertises for up to two minutes while waiting for pairing, remains active while connected, and waits up to two minutes for reconnection after disconnecting.
+- After the pairing/reconnection window expires, the optimized sketch enters deep sleep. The configured wake path is the board's physical EN/RESET button or a power cycle.
+
+## Hardware and wiring
+
+Use an **ESP32-WROOM-32 / original ESP32 DevKit V1** with the GPIOs shown below. Do not assume the same pin mapping works on ESP32-C3, ESP32-S3, or other board variants.
+
+| Joystick signal | ESP32 connection |
 |---|---|
 | VRx | GPIO34 |
 | VRy | GPIO35 |
-| SW  | GPIO32 |
-| VCC | 3V3 (not 5V) |
+| SW (push-button) | GPIO32 |
+| VCC | 3V3 |
 | GND | GND |
- 
-Power the joystick from **3V3**, not 5V. At 5V supply the VRx/VRy outputs
-can swing close to 5V at full deflection, which exceeds the ESP32 ADC
-pins' safe input voltage. Running the module from 3.3V keeps it safely
-within range and the joystick works identically.
- 
-GPIO34/35/32 were chosen because they're ADC1-capable (unaffected by
-Bluetooth radio activity, unlike ADC2), input-safe, and not
-boot-strapping pins.
- 
+
+Power the joystick from **3.3 V, not 5 V**. Its analog outputs must stay within the ESP32's input-voltage limits. The push-button is configured as active-low with the ESP32's internal pull-up.
+
 ## Controls
- 
-| Action | Result |
+
+| Joystick action | Keystroke sent by the recommended sketch |
 |---|---|
-| Push joystick UP | Next slide |
-| Push joystick RIGHT | Next slide |
-| Push joystick DOWN | Previous slide |
-| Push joystick LEFT | Previous slide |
-| Press joystick button | Start Slide Show (F5) |
- 
-Internally, "next" always sends the Right Arrow key and "previous" always
-sends the Left Arrow key, regardless of which physical direction
-triggered it - PowerPoint's native Up/Down arrow bindings in Slide Show
-mode are reversed from what this project wants, so Left/Right is used
-for reliability instead.
- 
-If UP and DOWN feel swapped on your specific joystick, swap the two
-`yEvent` lines in `handleJoystick()` rather than rewiring anything.
- ## Images 
- <img width="1420" height="1420" alt="IMG_20260815_224029" src="https://github.com/user-attachments/assets/f3e16d0e-ec48-4c38-9554-0b52e99a9a26" /> 
-<img width="1479" height="1479" alt="IMG_20260815_224010" src="https://github.com/user-attachments/assets/23a7b652-4e4a-491a-bb8a-4f1ce24c1784" />
+| Push UP or RIGHT | Right Arrow (next slide) |
+| Push DOWN or LEFT | Left Arrow (previous slide) |
+| Press joystick button | F5 (start slide show) |
 
-## Power behavior
- 
-Power is managed by pairing state, not by idle time:
- 
-1. Pressing the board's physical **EN/RESET** button boots the ESP32,
-   which advertises over Bluetooth for up to 2 minutes
-   (`PAIRING_WINDOW_MS`).
-2. If a host connects within that window, the device stays fully active
-   for as long as it stays connected - no timeout while connected.
-3. If nothing connects within 2 minutes, it deep-sleeps.
-4. If it was connected and then disconnects, it waits up to 2 minutes for
-   a reconnect before sleeping. Reconnecting in time cancels the timeout.
-5. Once asleep, the **only** way back on is pressing the physical
-   EN/RESET button (or a power cycle). No GPIO wake source is
-   configured - a hardware reset already forces a reboot on its own.
-The joystick's own push-button is unrelated to this state machine - it
-only sends the Start Slide Show keystroke, same as always.
- 
-## Installation
- 
-1. Arduino IDE, Boards Manager -> install the `esp32` board package
-   (Espressif Systems), latest 3.x.
-2. Install the `ESP32 BLE Keyboard` library by T-vK (Library Manager, or
-   add via .ZIP from its GitHub releases).
-3. Install `NimBLE-Arduino` by h2zero (Library Manager).
-4. Open the installed `ESP32-BLE-Keyboard` library's `BleKeyboard.h` and
-   uncomment `#define USE_NIMBLE`. Required - the library's default
-   (non-NimBLE) backend does not compile against current ESP32 core
-   versions.
-5. Open `optimized_presentation_remote.ino`.
-6. Tools -> Board -> "ESP32 Dev Module".
-7. Tools -> Upload Speed -> 921600 (drop to 115200 if uploads fail with a
-   checksum error - a common symptom of a marginal USB cable/port at the
-   higher speed).
-8. Select the correct COM port and upload.
-## Pairing
- 
-1. Power on (or press RESET). The device advertises as **"PPT Remote"**
-   for 2 minutes.
-2. Windows: Settings -> Bluetooth & devices -> Add device -> Bluetooth ->
-   select "PPT Remote". No PIN required.
-3. Open PowerPoint, press the joystick button to start the slide show
-   (F5), and use the joystick to navigate.
-## Testing
- 
-- **Serial Monitor** at 115200 baud shows connection state changes and
-  every action fired ("Action: NEXT slide", "Powering off (...)", etc.) -
-  useful for confirming behavior without needing PowerPoint open.
-- Move the joystick to each extreme and back to center: expect exactly
-  one action per push, not several.
-- Disconnect Bluetooth on the PC and reconnect within 2 minutes to
-  confirm the remote stays awake and reconnects.
-- Leave it disconnected for over 2 minutes to confirm it deep-sleeps, and
-  confirm RESET brings it back.
+Joystick orientation varies by module. If vertical directions are reversed, the sketch comments identify the two `yEvent` action lines that can be swapped. Do not change wiring and firmware mapping at the same time.
+
+## Software prerequisites
+
+- Arduino IDE.
+- Espressif ESP32 board package.
+- T-vK's **ESP32-BLE-Keyboard** library.
+- **NimBLE-Arduino** library.
+
+The current README setup uses NimBLE mode because the BLE Keyboard library's default backend may not compile with the selected ESP32 Arduino core. In the installed library's `BleKeyboard.h`, follow the library's documented method to enable `USE_NIMBLE`. This is a change to a third-party library file and may need to be repeated if that library is updated.
+
+## Build and upload
+
+1. Connect the ESP32 by USB.
+2. Install the board package and libraries listed above.
+3. Open `optimized_presentation_remote.ino` from this repository. Do not select a sketch from the pre-production folder for the normal build.
+4. Select **ESP32 Dev Module** (for the matching ESP32-WROOM-32 board) and the correct serial port.
+5. Start with an upload speed of 115200 if a faster upload is unreliable; the original project instructions also describe trying 921600 when supported by the board and USB connection.
+6. Upload, then open Serial Monitor at **115200 baud** for startup, connection, action, and sleep messages.
+
+## Safe first run
+
+This device sends real keyboard events to the connected computer. Test it deliberately:
+
+1. Close unsaved documents and avoid pairing while an important application or form has focus.
+2. Pair the board, then open a blank Notepad window first.
+3. Move the joystick in each direction and press the joystick button to confirm which keys are sent. The button sends F5; in the wrong focused application, that key may do something other than start a PowerPoint slide show.
+4. Only then open the intended presentation and test navigation.
+5. If the optimized sketch sleeps after its two-minute pairing/reconnect window, press the board's physical EN/RESET button or power-cycle it. The joystick button is not a wake button.
+
+## Pairing and use
+
+1. Reset or power the board. It advertises as **PPT Remote** for up to two minutes.
+2. On Windows, open **Settings → Bluetooth & devices → Add device → Bluetooth**, then select **PPT Remote**.
+3. Open a presentation and start the slide show. The joystick's push-button sends F5; joystick movement sends arrow-key events.
+4. If Bluetooth disconnects, reconnect within the two-minute window to keep the optimized sketch awake.
+
+## Configuration
+
+The configuration block near the top of `optimized_presentation_remote.ino` contains:
+
+- `PIN_JOY_VRX`, `PIN_JOY_VRY`, `PIN_JOY_SW` — GPIO assignments.
+- `BLE_DEVICE_NAME` and `BLE_MANUFACTURER` — BLE identity.
+- `ADC_DEADZONE`, `ADC_TRIGGER_MARGIN`, `ADC_SAMPLES` — input filtering and trigger thresholds.
+- `SLIDE_CHANGE_COOLDOWN_MS` and `BUTTON_DEBOUNCE_MS` — timing.
+- `PAIRING_WINDOW_MS` — pairing/reconnect timeout.
+- `BLE_BATTERY_LEVEL` — reported battery percentage; this value is hardcoded and is **not** a measurement of a real battery.
+
 ## Troubleshooting
- 
-**Doesn't appear in Windows' Bluetooth list** - confirm `USE_NIMBLE` is
-enabled in `BleKeyboard.h` and the sketch uploaded without errors.
- 
-**Joystick fires randomly / phantom slide changes** - increase
-`ADC_DEADZONE` and/or `ADC_TRIGGER_MARGIN` in the configuration section.
- 
-**Multiple slides skip on one push** - increase
-`SLIDE_CHANGE_COOLDOWN_MS`.
- 
-**Compile errors mentioning `std::string`/`String` in `BleKeyboard.cpp`**
-- NimBLE mode isn't enabled; see step 4 under Installation.
-**Upload fails with "Bad data checksum"** - lower the upload speed to
-115200, try a different USB cable/port, and close any program (like
-Serial Monitor) holding the COM port open during upload.
- 
-**Device won't wake up** - only the physical EN/RESET button (or a power
-cycle) wakes it from sleep, by design; nothing on the joystick will.
- 
-## Limitations
- 
-- Battery level reported over Bluetooth is hardcoded (`BLE_BATTERY_LEVEL`)
-  and does not reflect a real measured charge.
-- Only tested against Windows + PowerPoint; other Bluetooth HID hosts
-  were not part of this project's scope.
-## License
- 
-MIT.
- 
 
+| Symptom | Checks |
+|---|---|
+| Device does not appear in Bluetooth settings | Confirm upload succeeded, the board reset, and NimBLE mode is enabled as required by the installed BLE Keyboard library |
+| Random or phantom slide changes | Check joystick wiring and center voltage; increase `ADC_DEADZONE` or `ADC_TRIGGER_MARGIN` cautiously |
+| More than one action per push | Increase `SLIDE_CHANGE_COOLDOWN_MS` and confirm the joystick returns to its neutral region |
+| Vertical directions are reversed | Check joystick orientation and the `yEvent` mapping in `handleJoystick()` |
+| Compilation fails in `BleKeyboard.cpp` around `String`/`std::string` | Recheck the library's NimBLE configuration and the selected board-core/library versions |
+| Upload fails or reports a checksum error | Try a known-good data USB cable, a different port, a lower upload speed, and close any serial terminal using the port |
+| Device does not wake from deep sleep | Use the board's EN/RESET button or power-cycle it; the joystick does not wake the optimized sketch |
+
+## Limitations and verification
+
+- The optimized sketch reports a fixed battery level; it does not measure battery voltage or charge.
+- The repository documents Windows and PowerPoint as the target host. Compatibility with other operating systems, presentation apps, or Bluetooth stacks has not been independently verified in this maintenance pass.
+- No compilation, pairing, keystroke, or hardware test was run as part of this documentation update.
+
+## Repository contents
+
+| Path | Role |
+|---|---|
+| [`optimized_presentation_remote.ino`](optimized_presentation_remote.ino) | Recommended BLE keyboard firmware with pairing/reconnect timeout and deep sleep |
+| [`ESP32_PowerPoint_Remote.ino`](ESP32_PowerPoint_Remote.ino) | Earlier root-level BLE keyboard variant; use the recommended sketch unless you intentionally need to compare versions |
+| [`pre production codes just for your info dont impliment/`](pre%20production%20codes%20just%20for%20your%20info%20dont%20impliment/) | Older candidate sketches and `joystick_raw_test.ino`; not the normal upload target |
+| [`index.svg`](index.svg) | SVG project graphic |
+| [`LICENSE (8)`](LICENSE%20(8)) | License text; the nonstandard filename may prevent GitHub's automatic license detection |
+| [`README.md`](README.md) | This guide |
+
+The image references from the original project are retained below.
+
+<img width="1420" height="1420" alt="ESP32 PowerPoint remote assembly photo" src="https://github.com/user-attachments/assets/f3e16d0e-ec48-4c38-9554-0b52e99a9a26" />
+
+<img width="1479" height="1479" alt="ESP32 PowerPoint remote wiring photo" src="https://github.com/user-attachments/assets/23a7b652-4e4a-491a-bb8a-4f1ce24c1784" />
+
+## License
+
+See [`LICENSE (8)`](LICENSE%20(8)).
 
 ---
-
-## Skills & technologies
-
-`Arduino/C++`
-
-
-## Repository structure
-
-Key files and folders (not exhaustive):
-
-- `ESP32_PowerPoint_Remote.ino`
-- `LICENSE (8)`
-- `README.md`
-- `index.svg`
-- `optimized_presentation_remote.ino`
-- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (1).ino`
-- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (2).ino`
-- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (3).ino`
-- `pre production codes just for your info dont impliment/ESP32_PowerPoint_Remote (4).ino`
-- `pre production codes just for your info dont impliment/joystick_raw_test.ino`
-
-
-## How it works
-
-The main firmware sketch is `ESP32_PowerPoint_Remote.ino`. Open it in Arduino IDE, verify the board, pin mapping and library requirements, then compile and upload. Test hardware behaviour on the real circuit before relying on it.
-
 
 ## Maintenance & Audit
 
