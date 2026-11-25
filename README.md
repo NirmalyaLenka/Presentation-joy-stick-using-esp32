@@ -130,3 +130,9 @@ See [`LICENSE (8)`](LICENSE%20(8)).
 - **Scope and evidence:** This is a documentation-level maintenance pass. It does not establish that source code compiles, dependencies are current, security has been tested, or hardware/runtime behavior has been verified.
 - **Code and tests:** No new functional code changes or test results are claimed by this README update. Run project-specific build, test, and hardware/runtime checks before relying on the project.
 - **Maintenance baseline:** Documentation status recorded through 22 November 2026; revisit setup instructions, dependencies, safety limits, known limitations, and tests when the project changes.
+
+## Contact
+
+Maintained up to 25 November 2026.
+
+If you encounter any problems, please contact [carmodbhai@gmail.com](mailto:carmodbhai@gmail.com).
